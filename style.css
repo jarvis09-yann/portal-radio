@@ -19,9 +19,13 @@ img {
   transition: transform 0.2s; /* smoothen the translation */
 }
 
-img:hover {
-  translate: 0 5px;
-  transform: scale(1.05);
+#radio-image:hover {
+  translate: 0 3px;
+  transform: scale(1.1);
+}
+
+#radio-image:active {
+  transform: scale(1.2);
 }
 
 #image-container {

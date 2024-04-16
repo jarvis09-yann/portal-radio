@@ -1,5 +1,6 @@
 let audio;
 const radio = document.getElementById("radio-image");
+const tip = document.getElementById("tip");
 
 function toggleMusic() {
   if (radio.classList.contains("play")) {
@@ -15,9 +16,11 @@ function toggleMusic() {
     }
     audio.volume = 0.5;
     audio.play();
+    tip.classList.add("hidden");
   } else {
     radio.classList.remove("pause");
     radio.classList.add("play");
+    tip.classList.remove("hidden");
 
     audio.pause();
   }
