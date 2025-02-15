@@ -40,7 +40,7 @@ const songs = {
     duration: "0:22",
   },
   caraMia: {
-    title: "Cara Mia",
+    title: "Cara Mia Addio",
     artist: "Portal 2",
     src: "./assets/audio/cara mia.mp3",
     duration: "2:35",
@@ -52,6 +52,11 @@ const songs = {
     duration: "2:20",
   },
 };
+const songsList = {
+  songs: Object.keys(songs),
+  position: 0,
+};
+let playType = "normal";
 
 function loadSong(song) {
   musicPlayer.src = song.src;
@@ -106,24 +111,30 @@ playSlider.addEventListener("click", () => {
 loopButton.addEventListener("click", () => {
   if (loopButton.classList.contains("enabled")) {
     loopButton.classList.remove("enabled");
-    shuffleButton.classList.add("enabled");
     musicPlayer.loop = false;
+    playType = "normal";
   } else {
     loopButton.classList.add("enabled");
-    shuffleButton.classList.remove("enabled");
     musicPlayer.loop = true;
+    playType = "loop";
+  }
+  if (shuffleButton.classList.contains("enabled")) {
+    shuffleButton.classList.remove("enabled");
+    musicPlayer.loop = false;
   }
 });
 
 shuffleButton.addEventListener("click", () => {
   if (shuffleButton.classList.contains("enabled")) {
     shuffleButton.classList.remove("enabled");
-    musicPlayer.loop = true;
-    loopButton.classList.add("enabled");
+    playType = "normal";
   } else {
     shuffleButton.classList.add("enabled");
-    musicPlayer.loop = false;
+    playType = "shuffle";
+  }
+  if (loopButton.classList.contains("enabled")) {
     loopButton.classList.remove("enabled");
+    musicPlayer.loop = false;
   }
 });
 
@@ -138,26 +149,36 @@ document.addEventListener("keydown", (e) => {
     previousButton.click();
   }
 });
+
 musicPlayer.addEventListener("ended", () => {
   lastPlayedSongs.push(currentSong);
   clearInterval(getPlayPosition);
-  if (shuffleButton.classList.contains("enabled")) {
-    let randomSong =
-      songs[
-        Object.keys(songs)[
-          Math.floor(Math.random() * Object.keys(songs).length)
-        ]
-      ];
-    loadSong(randomSong);
+  if (playType === "shuffle") {
+    loadSong(getRandomSong());
     playPauseSong();
   } else {
-    loadSong(songs.radioLQ);
+    songsList.position++;
+    if (songsList.position === Object.keys(songs).length) {
+      songsList.position = 0;
+    }
+    loadSong(songs[songsList.songs[songsList.position]]);
     playPauseSong();
   }
 });
 
+function getRandomSong() {
+  let randomSong =
+    songs[
+      Object.keys(songs)[Math.floor(Math.random() * Object.keys(songs).length)]
+    ];
+  if (lastPlayedSongs.includes(randomSong)) {
+    getRandomSong();
+  }
+  return randomSong;
+}
+
 nextButton.addEventListener("click", () => {
-  musicPlayer.currentTime = 10000;
+  musicPlayer.dispatchEvent(new Event("ended"));
 });
 
 previousButton.addEventListener("click", () => {
